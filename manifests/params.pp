@@ -15,7 +15,7 @@ class sphinx::params {
 	}
 	
 	$configdir = $sphinx_configdir ? {
-		''      => '/etc/sphinxsearch',
+		''      => '/usr/local/etc',
 		default => $sphinx_configdir,
 	}
 	
