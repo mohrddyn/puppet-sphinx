@@ -24,8 +24,8 @@ class sphinx::config {
 		owner   => 'root',
 		group   => 'root',
 		mode    => '0644',
-		content => undef,
-		source  => undef,
+		content => $sphinx::params::configfile_content,
+		source  => $sphinx::params::configfile_source,
 		require => File[$sphinx::params::configdir],
 	}
 	

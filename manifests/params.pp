@@ -24,6 +24,16 @@ class sphinx::params {
 		default => $sphinx_configfile,
 	}
 	
+	$configfile_content = $sphinx_configfile_content ? {
+	 ''      => undef,
+	 default => template($sphinx_configfile_content),
+	}
+	
+	$configfile_source = $sphinx_configfile_source ? {
+	 ''      => undef,
+	 default => $sphinx_configfile_content,
+	}
+	
 	$libdir = $sphinx_libdir ? {
 		''      => '/var/lib/sphinx',
 		default => $sphinx_libdir,
