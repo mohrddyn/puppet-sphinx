@@ -24,11 +24,6 @@ class sphinx::params {
 		default => $sphinx_configfile,
 	}
 	
-	$configfile_content = $sphinx_configfile_content ? {
-	 ''      => undef,
-	 default => template($sphinx_configfile_content),
-	}
-	
 	$configfile_source = $sphinx_configfile_source ? {
 	 ''      => undef,
 	 default => $sphinx_configfile_content,
@@ -58,4 +53,10 @@ class sphinx::params {
 	 ''      => '0.9.9',
 	 default => $sphinx_version,
 	}
+
+  # This has to go last so its interpreted after all variables have been populated
+ 	$configfile_content = $sphinx_configfile_content ? {
+ 	 ''      => undef,
+ 	 default => template($sphinx_configfile_content),
+ 	}
 }
