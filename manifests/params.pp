@@ -24,7 +24,7 @@ class sphinx::params {
 		default => $sphinx_configfile,
 	}
 	
-	$logdir = $sphinx_libdir ? {
+	$libdir = $sphinx_libdir ? {
 		''      => '/var/lib/sphinx',
 		default => $sphinx_libdir,
 	}
