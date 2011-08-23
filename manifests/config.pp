@@ -19,6 +19,16 @@ class sphinx::config {
 		require => Class['sphinx::install'],
 	}
 	
+	file { $sphinx::params::configfile:
+		ensure  => present,
+		owner   => 'root',
+		group   => 'root',
+		mode    => '0644',
+		content => undef,
+		source  => undef,
+		require => File[$sphinx::params::configdir],
+	}
+	
 	file { $sphinx::params::libdir:
 		ensure  => directory,
 		owner   => 'root',
