@@ -1,42 +1,45 @@
 # Class: sphinx::install
 #
 #
-class sphinx::install {
+class sphinx::install (
+  $version,
+  $unpack_root
+) {
+
   include buildenv::c
-	include buildenv::packages::mysql
+	include buildenv::libs::mysql
 	
-	common::archive { "sphinx-${sphinx::params::version}":
+	common::archive { "sphinx-${version}":
 		ensure   => present,
 		checksum => false,
-		url      => "http://sphinxsearch.com/files/sphinx-${sphinx::params::version}.tar.gz",
+		url      => "http://sphinxsearch.com/files/sphinx-${version}.tar.gz",
 		timeout  => 600,
-		target   => '/usr/src',
+		target   => $unpack_root,
 	}
 	
-	common::archive { "libstemmer":
+	common::archive { 'libstemmer':
 		ensure   => present,
 		checksum => false,
 		url      => "http://snowball.tartarus.org/dist/libstemmer_c.tgz",
 		timeout  => 600,
-		target   => "/usr/src/sphinx-${sphinx::params::version}",
+		target   => "${unpack_root}/sphinx-${version}",
 		notify   => Exec['configure-sphinx'],
-		require	 => Common::Archive["sphinx-${sphinx::params::version}"],
+		require	 => Common::Archive["sphinx-${version}"],
 	}
 	
 	exec { 'configure-sphinx':
-		command     => "/usr/src/sphinx-${sphinx::params::version}/configure --with-libstemmer",
-		cwd         => "/usr/src/sphinx-${sphinx::params::version}",
-		creates     => "/usr/src/sphinx-${sphinx::params::version}/Makefile",
+		command     => "${unpack_root}/sphinx-${version}/configure --with-libstemmer",
+		cwd         => "${unpack_root}/sphinx-${version}",
+		creates     => "${unpack_root}/sphinx-${version}/Makefile",
 		refreshonly => true,
 		notify		  => Exec['make-sphinx'],
-		require     => [ Common::Archive['libstemmer'], Class['buildenv::c'],
-		                 Class['buildenv::packages::mysql'] ],
+		require     => [ Common::Archive['libstemmer'], Class['buildenv::c'], Class['buildenv::libs::mysql'] ],
 	}
 
 	exec { 'make-sphinx':
 		command     => '/usr/bin/make',
-		cwd         => "/usr/src/sphinx-${sphinx::params::version}",
-		creates     => "/usr/src/sphinx-${sphinx::params::version}/src/searchd",
+		cwd         => "${unpack_root}/sphinx-${version}",
+		creates     => "${unpack_root}/sphinx-${version}/src/searchd",
 		refreshonly => true,
 		notify		  => Exec['make-install-sphinx'],
 		require     => Exec['configure-sphinx'],
@@ -44,7 +47,7 @@ class sphinx::install {
 
 	exec { 'make-install-sphinx':
 		command     => '/usr/bin/make install',
-		cwd         => "/usr/src/sphinx-${sphinx::params::version}",
+		cwd         => "/usr/src/sphinx-${version}",
 		creates     => '/usr/local/bin/searchd',
 		refreshonly => true,
 		require     => Exec['make-sphinx'],

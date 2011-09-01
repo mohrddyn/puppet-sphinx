@@ -1,52 +1,73 @@
 # Class: sphinx::config
 #
 #
-class sphinx::config {
+class sphinx::config (
+  $os_suffix,
+  $configdir,
+  $configfile,
+  $configfile_content,
+  $configfile_source,
+  $libdir,
+  $logdir,
+  $pidfile,
+  $dbdir
+) {
+
+  if $configfile_content {
+    $real_configfile_content = $configfile_content
+  } else {
+    $real_configfile_source = $configfile_source
+  }
+
   file { '/etc/init.d/sphinxsearch':
 		ensure  => present,
 		owner   => 'root',
 		group   => 'root',
 		mode    => '0755',
-		content => template("sphinx/init.${sphinx::params::os_suffix}.erb"),
+		content => template("sphinx/init.${os_suffix}.erb"),
 		notify  => Class['sphinx::service'],
 		require => Class['sphinx::install'],
 	}
 	
-	file { $sphinx::params::configdir:
+	file { $configdir:
 		ensure  => directory,
 		owner   => 'root',
 		group   => 'root',
+		mode    => '0755',
 		require => Class['sphinx::install'],
 	}
 	
-	file { $sphinx::params::configfile:
+	file { $configfile:
 		ensure  => present,
 		owner   => 'root',
 		group   => 'root',
 		mode    => '0644',
-		content => $sphinx::params::configfile_content,
-		source  => $sphinx::params::configfile_source,
-		require => File[$sphinx::params::configdir],
+		content => $real_configfile_content,
+		source  => $real_configfile_source,
+		require => File[$configdir],
 	}
 	
-	file { $sphinx::params::libdir:
+	file { $libdir:
 		ensure  => directory,
 		owner   => 'root',
 		group   => 'root',
+		mode    => '0755',
 		require => Class['sphinx::install'],
 	}
 	
-	file { $sphinx::params::logdir:
+	file { $logdir:
 		ensure  => directory,
 		owner   => 'root',
 		group   => 'root',
+		mode    => '0755',
 		require => Class['sphinx::install'],
 	}
 	
-	file { $sphinx::params::dbdir:
+	file { $dbdir:
 		ensure  => directory,
 		owner   => 'root',
 		group   => 'root',
+		mode    => '0755',
 		require => File[$sphinx::params::libdir],
 	}
 }

@@ -25,8 +25,8 @@ class sphinx::params {
 	}
 	
 	$configfile_source = $sphinx_configfile_source ? {
-	 ''      => undef,
-	 default => $sphinx_configfile_content,
+	 ''      => false,
+	 default => $sphinx_configfile_source,
 	}
 	
 	$libdir = $sphinx_libdir ? {
@@ -56,7 +56,7 @@ class sphinx::params {
 
   # This has to go last so its interpreted after all variables have been populated
  	$configfile_content = $sphinx_configfile_content ? {
- 	 ''      => undef,
+ 	 ''      => false,
  	 default => template($sphinx_configfile_content),
  	}
 }
